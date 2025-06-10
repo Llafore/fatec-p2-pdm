@@ -16,7 +16,7 @@ app.get('/search', async (req, res) => {
         return res.status(400).json({ erro: 'Parâmetro "query" é obrigatório.' });
     }
     try{
-            const result = await openWeatherClient.get('forecast', {
+            const response = await openWeatherClient.get('forecast', {
             params: {
                 q: city,
                 appid: process.env.OPENWEATHER_KEY,
@@ -24,7 +24,21 @@ app.get('/search', async (req, res) => {
                 lang: 'pt_br'
             }
         })
-        res.json(result.data)
+
+        const dataProcessing = response.data.list.map(item => ({
+            dt: item.dt,
+            temp_min: item.main.temp_min,
+            temp_max: item.main.temp_max,
+            humidity: item.main.humidity,
+            description: item.weather[0]?.description || null,
+            icon: item.weather[0]?.icon || null
+        }))
+
+        res.json({
+            city: response.data.city?.name,
+            timezone: response.data.city?.timezone,
+            list: dataProcessing
+        })
 
     } catch (error) {
         if(error.response){
