@@ -16,9 +16,8 @@ const Busca = ({ onBuscaRealizada, onLoading, resultados }) => {
 						query: termoDeBusca
 					}
 				})
-				onBuscaRealizada(response.data.list)
+				onBuscaRealizada(response.data)
 			} catch (error) {
-				console.log(error)
 				onBuscaRealizada(error.response.data)
 			} finally {
 				onLoading(false)
